@@ -1,0 +1,122 @@
+<div class="jumbotron">
+  <h1>Marriage Setting !</h1>
+  <p class="lead">
+    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
+    Always a pleasure To do setting for you :).
+  </p>
+
+</div>
+
+<div class="row marketing">
+
+ <table st-table="orderCollection" class="table table-striped">
+
+  <thead>
+
+  <tr>
+    <th rowspan="2">Name</th>
+    <th colspan="3">Type</th>
+    <th colspan="3">Shift</th>
+    <th colspan="2">People</th>
+    <th colspan="2">price</th>
+    <th rowspan="2" colspan="4">Menu</th>
+    <th colspan="2">Action</th>
+  
+  </tr>
+  
+  <tr>
+    <th>Veg</th>
+    <th>Non Veg</th>
+    <th>jainokey</th>
+    <th>Morning</th>
+    <th>Evening</th>
+    <th>Night</th>
+    <th>Min</th>
+    <th>Max</th>
+    <th>Quoted</th>
+    <th>Min</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+ 
+  </thead>
+  <tbody>
+  <tr ng-repeat="row in orderCollection">
+
+    <td>{{row.name}}</td>
+  
+    <td>
+         <span ng-show="row.type == 'Veg'" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+ 
+         <span ng-hide="row.type == 'Veg'" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+
+     </td>
+
+    <td>
+         <span ng-show="row.type == 'Non Veg'" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+
+         <span ng-hide="row.type == 'Non Veg'" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+    </td>
+   
+    <td>
+         <span ng-show="row.type == 'Jainokey'" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+
+         <span ng-hide="row.type == 'Jainokey'" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+
+    </td>
+
+    <td>
+
+         <span ng-show="row.shift.indexOf('Morning')> -1" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+ 
+         <span ng-hide="row.shift.indexOf('Morning') > -1 " class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+
+    </td>
+   
+    <td>
+         <span ng-show="row.shift.indexOf('Evening')> -1" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+ 
+         <span ng-hide="row.shift.indexOf('Evening') > -1" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+
+    </td>
+    <td>
+         <span ng-show="row.shift.indexOf('Night')> -1" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+ 
+         <span ng-hide="row.shift.indexOf('Night')> -1" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+
+    </td>
+
+    <td>{{row.min_people}}</td>
+    <td>{{row.max_people}}</td>
+
+    <td>{{row.quoted_price | currency}}</td>
+    <td>{{row.min_price | currency}}</td>
+      <td colspan="4">
+        <table class="table">
+        <thead>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Options</th>
+          <th>Example</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="menu in row.menu">
+            <td>{{menu.name}}</td>
+            <td>{{menu.quantity}}</td>
+            <td>
+              <p ng-repeat="(key,option) in menu.options" >
+              {{ key+1 }}) {{ option }}
+              </p>
+            </td>
+            <td>{{menu.example}}</td>
+          </tr>
+        </tbody>  
+        </table>
+    </td>
+    <td>Edit</td>
+    <td>Delete</td>
+  </tr>
+  </tbody>
+</table>
+
+</div>
