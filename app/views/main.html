@@ -8,6 +8,10 @@
 </div>
 
 <div class="row marketing">
+<button type="button" ng-click="addItem()" class="btn btn-sm btn-success">
+              <i class="glyphicon glyphicon-plus">
+              </i> Add Order
+  </button>
 
  <table st-table="orderCollection" class="table table-striped">
 
@@ -19,7 +23,7 @@
     <th colspan="3">Shift</th>
     <th colspan="2">People</th>
     <th colspan="2">price</th>
-    <th rowspan="2" colspan="4">Menu</th>
+    <th  colspan="4">Menu</th>
     <th colspan="2">Action</th>
   
   </tr>
@@ -35,13 +39,18 @@
     <th>Max</th>
     <th>Quoted</th>
     <th>Min</th>
+    <th>Name</th>
+    <th>Quantity</th>
+    <th>Options</th>
+    <th>Example</th>
+    <!-- <th>View</th> -->
     <th>Edit</th>
     <th>Delete</th>
   </tr>
  
   </thead>
   <tbody>
-  <tr ng-repeat="row in orderCollection">
+  <tr ng-repeat="(key,row) in orderCollection">
 
     <td>{{row.name}}</td>
   
@@ -89,20 +98,14 @@
     <td>{{row.min_people}}</td>
     <td>{{row.max_people}}</td>
 
-    <td>{{row.quoted_price | currency}}</td>
-    <td>{{row.min_price | currency}}</td>
+    <td>{{row.quoted_price |  currency:"&#8377;"}}</td>
+    <td>{{row.min_price |  currency:"&#8377;"}}</td>
       <td colspan="4">
         <table class="table">
-        <thead>
-          <th>Name</th>
-          <th>Quantity</th>
-          <th>Options</th>
-          <th>Example</th>
-        </thead>
         <tbody>
           <tr ng-repeat="menu in row.menu">
             <td>{{menu.name}}</td>
-            <td>{{menu.quantity}}</td>
+            <td> <span class="badge">{{menu.quantity}} </span></td>
             <td>
               <p ng-repeat="(key,option) in menu.options" >
               {{ key+1 }}) {{ option }}
@@ -113,10 +116,146 @@
         </tbody>  
         </table>
     </td>
-    <td>Edit</td>
-    <td>Delete</td>
+    <!-- <td>
+            <button type="button" ng-click="viewItem(row)" class="btn btn-sm btn-success">
+              <i class="glyphicon glyphicon-eye-open">
+              </i> View
+            </button>
+
+    </td> -->
+    <td>
+            <button type="button" ng-click="editItem(key)" class="btn btn-sm btn-warning">
+              <i class="glyphicon glyphicon-pencil">
+              </i> Edit
+            </button>
+
+    </td>
+    <td>
+        <button type="button" ng-click="removeItem(row,key)" class="btn btn-sm btn-danger">
+              <i class="glyphicon glyphicon-remove-circle">
+              </i> Delete
+            </button>
+    </td>
   </tr>
+  <tr ng-hide="orderCollection" class="danger"><td colspan="17"> No data Found ;(</td></tr>
   </tbody>
 </table>
 
 </div>
+
+
+
+        <!-- this is template for delete order functionality -->
+ <script type="text/ng-template" id="deleteOrder.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete <b> <i>"{{ item.name}}" </i></b> !</h3>
+        </div>
+        <div class="modal-body">
+            You Really Want to delete the selected Item <b> <i>"{{ item.name}}" </i></b> .
+        </div>
+    
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="delete()">Delete</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+        <!-- this is template for add order functionality -->
+ <script type="text/ng-template" id="addOrder.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Order !</h3>
+        </div>
+        <div class="modal-body">
+        <form class="form-horizontal" novalidate  name="orderform" role="form'
+        " enctype= 'multipart/form-data'>
+          <div class="form-group has-success as has-feedback" >
+            <label class="control-label col-sm-3" for="name">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" ng-model="order.name" required id="name" aria-describedby="nameStatus">
+              <!--<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>-->
+              <span id="nameStatus" class="sr-only">(success)</span>
+            </div>
+          </div>
+
+          <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="type">Type</label>
+            <div class="col-sm-9">
+              
+              <select class="form-control" ng-model="order.type" required>
+              <option ng-repeat="food in foodType" value="{{food}}"> {{ food}}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="type">Shift</label>
+            <div class="col-sm-9">
+              <div class="has-success as" ng-repeat="shift in shiftType">
+                <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="checkboxSuccess" ng-model="order.shift" required value="{{shift}}">
+                    {{shift}}
+                    </label>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="minpeople">Min People</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="minpeople" aria-describedby="minpeopleStatus">
+              <!--<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>-->
+              <span id="minpeopleStatus" class="sr-only">(success)</span>
+            </div>
+          </div>
+
+          <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="maxpeople">Max People</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="maxpeople" aria-describedby="maxpeopleStatus">
+              <!--<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>-->
+              <span id="maxpeopleStatus" class="sr-only">(success)</span>
+            </div>
+          </div>
+
+          <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="quoatedprice">Quoated Price</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="quoatedprice" aria-describedby="quoatedpriceStatus">
+              <!--<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>-->
+              <span id="quoatedpriceStatus" class="sr-only">(success)</span>
+            </div>
+          </div>
+
+          <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="minprice">Min Price</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="minprice" aria-describedby="minpriceStatus">
+              <!--<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>-->
+              <span id="minpriceStatus" class="sr-only">(success)</span>
+            </div>
+          </div>
+
+           <div class="form-group has-success as has-feedback">
+            <label class="control-label col-sm-3" for="menu">Shift</label>
+            <div class="col-sm-9">
+              <div class="has-success as" ng-repeat="menu in menusType">
+                <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="checkboxSuccess" value="{{menu}}">
+                    {{menu}}
+                    </label>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+        </form>
+        </div>
+    
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="add()">Delete</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
