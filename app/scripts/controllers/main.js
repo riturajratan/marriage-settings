@@ -38,14 +38,14 @@ angular.module('marriageSettingsApp')
 
 			},
       {
-				'name':'rituraj',
+				'name':'Swati',
 				'type':'Veg',
-				'shift':['Morning','Evening'],
-				'min_people':100,
-				'max_people':200,
+				'shift':['Evening'],
+				'min_people':50,
+				'max_people':2000,
 		    'quoted_price':100000,
 		    'min_price':10000,
-		    'menu':[
+		    'menus':[
 		    					{
 		    						'name':'Rituraj',
 		    						'quantity':2,
@@ -71,6 +71,10 @@ angular.module('marriageSettingsApp')
       removeOrder:function(index){
       	$log.info(index);
       	 orderCollection.splice(index,1);
+      },
+      addOrder:function(order){
+      	$log.info(order);
+      	 orderCollection.push(order);
       }
     };
 
@@ -89,15 +93,15 @@ angular.module('marriageSettingsApp')
     //type of menus 
     
     $scope.menusType=[
-	    '	Welcome Drink',
-	    '	Starter',
-	    '	Salad',
-	    '	Breakfast',
-	    '	Main Course',
-	    '	Dal',
-	    '	Rice',
-	    '	Raitha',
-	    '	Keser'
+	    'Welcome Drink',
+	    'Starter',
+	    'Salad',
+	    'Breakfast',
+	    'Main Course',
+	    'Dal',
+	    'Rice',
+	    'Raitha',
+	    'Keser'
     ];
 
     // type of food
@@ -143,7 +147,7 @@ angular.module('marriageSettingsApp')
 
 	    var modalInstance = $modal.open({
 	      templateUrl: 'addOrder.html',
-	      controller: 'ModaldeleteOrderCtrl',
+	      controller: 'OrderCtrl',
 	      scope:$scope,
 	      size:'lg',
 	      backdrop: 'static',	
@@ -159,11 +163,76 @@ angular.module('marriageSettingsApp')
 
 
 angular.module('marriageSettingsApp')
-.controller('ModaldeleteOrderCtrl', function ($scope, $modalInstance, items ,key,Orders) {
+.controller('OrderCtrl', function ($scope, $modalInstance, items ,key,Orders) {
 
   $scope.item = items;
 
+  $scope.order={
+  	shift:['Morning'],
+  	type:$scope.foodType[0],
+  	menus:[
+  	// {
+  	// 		'name':'Welcome Drink',
+			// 	'quantity':2,
+			// 	'options':['paneer pakoda','allo pakoda'],
+			// 	'example':'test'
+			// }
+  	]
+
+
+
+  };
+
+	angular.forEach($scope.menusType,function(val,key){
+  	$scope.order.menus.push({'name':val,'quantity':2,'example':'','status':true});
+  });
+
+  $scope.order['menu']=[];
+
+  angular.forEach($scope.order.menus,function(val,key){
+  	$scope.order.menu.push(val.name);
+  });
   
+  $scope.integerval = /^\d*$/;
+
+// toggle selection for a given shift by name
+  $scope.toggleSelection = function toggleSelection(shiftname) {
+    var idx = $scope.order.shift.indexOf(shiftname);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.order.shift.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.order.shift.push(shiftname);
+    }
+  };
+
+// toggle selection for a given shift by name
+  $scope.toggleMenuSelection = function toggleSelection(menuname) {
+    var idx = $scope.order.menu.indexOf(menuname);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.order.menu.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.order.menu.push(menuname);
+    }
+  };
+
+$scope.showMenuSelection = function(menuname) {
+     var found = $filter('filter')($scope.order.menus, {id: menuname}, true);
+     if (found.length) {
+         return 1;
+     } else {
+				return 0;
+	     }
+ }
   $scope.delete = function () {
   	Orders.removeOrder(key);
   	// $scope.orderCollection[key];
@@ -174,6 +243,17 @@ angular.module('marriageSettingsApp')
   $scope.cancel = function () {
      $modalInstance.dismiss('cancel');
   };
+
+  $scope.add = function () {
+  	delete $scope.order['menu'];
+     Orders.addOrder($scope.order);
+    	$scope.orderCollection=Orders.getorders();
+     $modalInstance.close($scope.item);
+  };
+
+  $scope.getNumber = function(num) {
+    return new Array(num);   
+	};
 
 });
 
