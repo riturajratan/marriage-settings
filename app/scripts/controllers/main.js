@@ -16,51 +16,53 @@ angular.module('marriageSettingsApp')
 				'name':'rituraj',
 				'type':'Veg',
 				'shift':['Morning','Evening'],
-				'min_people':100,
-				'max_people':200,
-		    'quoted_price':100000,
-		    'min_price':10000,
-		    'menu':[
+				'minpeople':100,
+				'maxpeople':200,
+		    'quoatedprice':100000,
+		    'minprice':10000,
+		    'menus':[
 		    					{
 		    						'name':'name',
 		    						'quantity':2,
 		    						'options':['paneer pakoda','allo pakoda'],
-		    						'example':'test'
+		    						'example':'test',
+		    						'status':true
 		    					},{
 		    						'name':'name',
 		    						'quantity':2,
 		    						'options':['paneer pakoda','allo pakoda'],
-		    						'example':'test'
+		    						'example':'test',
+		    						'status':true
 		    					}
 
 
 		  				]
 
-			},
-      {
+				},
+  	    {
+				
 				'name':'Swati',
 				'type':'Veg',
 				'shift':['Evening'],
-				'min_people':50,
-				'max_people':2000,
-		    'quoted_price':100000,
-		    'min_price':10000,
+				'minpeople':50,
+				'maxpeople':2000,
+		    'quoatedprice':100000,
+		    'minprice':10000,
 		    'menus':[
 		    					{
-		    						'name':'Rituraj',
+		    						'name':'name',
 		    						'quantity':2,
 		    						'options':['paneer pakoda','allo pakoda'],
-		    						'example':'test'
-		    					},{
-		    						'name':'Nishant',
+		    						'example':'test',
+		    						'status':true
+		    					},
+		    					{
+		    						'name':'name',
 		    						'quantity':2,
 		    						'options':['paneer pakoda','allo pakoda'],
 		    						'example':'test'
 		    					}
-
-
-		  				]
-
+		  			]
 			}
 	];
 
@@ -75,6 +77,9 @@ angular.module('marriageSettingsApp')
       addOrder:function(order){
       	$log.info(order);
       	 orderCollection.push(order);
+      },
+     editOrder:function(order){
+      	$log.info(order);
       }
     };
 
@@ -126,7 +131,7 @@ angular.module('marriageSettingsApp')
 
 	    var modalInstance = $modal.open({
 	      templateUrl: 'deleteOrder.html',
-	      controller: 'ModaldeleteOrderCtrl',
+	      controller: 'OrderCtrl',
 	      scope:$scope,
 	      backdrop: 'static',	      resolve: {
 	        items: function(){
@@ -159,6 +164,23 @@ angular.module('marriageSettingsApp')
 	  });
   };
 
+ $scope.editItem = function (index) {
+
+	    var modalInstance = $modal.open({
+	      templateUrl: 'addOrder.html',
+	      controller: 'EditOrderCtrl',
+	      scope:$scope,
+	      size:'lg',
+	      backdrop: 'static',	
+        resolve: {
+	        indexkey:function(){
+	        	return index;
+	        }
+	      }
+	  
+	  });
+  };
+
 });
 
 
@@ -184,7 +206,9 @@ angular.module('marriageSettingsApp')
   };
 
 	angular.forEach($scope.menusType,function(val,key){
+
   	$scope.order.menus.push({'name':val,'quantity':2,'example':'','status':true});
+  
   });
 
   $scope.order['menu']=[];
@@ -232,7 +256,7 @@ $scope.showMenuSelection = function(menuname) {
      } else {
 				return 0;
 	     }
- }
+ };
   $scope.delete = function () {
   	Orders.removeOrder(key);
   	// $scope.orderCollection[key];
@@ -250,6 +274,82 @@ $scope.showMenuSelection = function(menuname) {
     	$scope.orderCollection=Orders.getorders();
      $modalInstance.close($scope.item);
   };
+
+  $scope.getNumber = function(num) {
+    return new Array(num);   
+	};
+
+});
+
+
+angular.module('marriageSettingsApp')
+.controller('EditOrderCtrl', function ($scope, $modalInstance, indexkey,Orders) {
+
+$scope.edit=true;
+
+  $scope.order=$scope.orderCollection[indexkey];
+  
+  $scope.order['menu']=[];
+
+  angular.forEach($scope.order.menus,function(val,key){
+  	$scope.order.menu.push(val.name);
+  });
+
+
+  
+  $scope.integerval = /^\d*$/;
+
+// toggle selection for a given shift by name
+  $scope.toggleSelection = function toggleSelection(shiftname) {
+    var idx = $scope.order.shift.indexOf(shiftname);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.order.shift.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.order.shift.push(shiftname);
+    }
+  };
+
+// toggle selection for a given shift by name
+  $scope.toggleMenuSelection = function toggleSelection(menuname) {
+    var idx = $scope.order.menu.indexOf(menuname);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.order.menu.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.order.menu.push(menuname);
+    }
+  };
+
+$scope.showMenuSelection = function(menuname) {
+     var found = $filter('filter')($scope.order.menus, {id: menuname}, true);
+     if (found.length) {
+         return 1;
+     } else {
+				return 0;
+	     }
+ };
+
+
+  $scope.edit = function () {
+  	delete $scope.order['menu'];
+     Orders.editOrder($scope.order);
+    	$scope.orderCollection=Orders.getorders();
+     $modalInstance.close();
+  };
+
+  $scope.cancel = function () {
+     $modalInstance.dismiss('cancel');
+  };
+
 
   $scope.getNumber = function(num) {
     return new Array(num);   

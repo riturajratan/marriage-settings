@@ -95,20 +95,20 @@
 
     </td>
 
-    <td>{{row.min_people}}</td>
-    <td>{{row.max_people}}</td>
+    <td>{{row.minpeople}}</td>
+    <td>{{row.maxpeople}}</td>
 
-    <td>{{row.quoted_price |  currency:"&#8377;"}}</td>
-    <td>{{row.min_price |  currency:"&#8377;"}}</td>
+    <td>{{row.quoatedprice |  currency:"&#8377;"}}</td>
+    <td>{{row.minprice |  currency:"&#8377;"}}</td>
       <td colspan="4">
         <table class="table">
         <tbody>
-          <tr ng-repeat="menu in row.menu">
+          <tr ng-repeat="menu in row.menus | filter:{status:true}">
             <td>{{menu.name}}</td>
             <td> <span class="badge">{{menu.quantity}} </span></td>
             <td>
               <p ng-repeat="(key,option) in menu.options" >
-              {{ key+1 }}) {{ option }}
+              {{ $index+1 }}) {{ option }}
               </p>
             </td>
             <td>{{menu.example}}</td>
@@ -163,7 +163,8 @@
         <!-- this is template for add order functionality -->
  <script type="text/ng-template" id="addOrder.html">
         <div class="modal-header">
-            <h3 class="modal-title">Add New Order <strong>"{{ order.name}}"</strong> !</h3>
+            <h3 class="modal-title" ng-hide="edit">Add New Order <strong>"{{ order.name}}"</strong> !</h3>
+            <h3 class="modal-title" ng-show="edit">Edit  Order <strong>"{{ order.name}}"</strong> !</h3>
         </div>
         <div class="modal-body">
         <form class="form-horizontal" novalidate  name="orderform" role="form'
@@ -215,7 +216,7 @@
               <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="orderform.minpeople.$valid"></span>
               <span id="minpeopleStatus" class="sr-only">(success)</span>
             
-              <p ng-show="orderform.minpeople.$dirty && orderform.minpeople.$invalid" class="text-danger">Hey! No letters, buddy! Write only Numeric Value :)</p>
+              <p ng-show="orderform.minpeople.$dirty && orderform.minpeople.$invalid" class="text-danger">Hey! No letters, buddy! Write only positive Numeric Value :)</p>
             
             </div>
           </div>
@@ -226,7 +227,7 @@
               <input type="number" class="form-control" id="maxpeople" name="maxpeople" aria-describedby="maxpeopleStatus" ng-pattern="integerval" required ng-model="order.maxpeople">
               <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="orderform.maxpeople.$valid"></span>
               <span id="maxpeopleStatus" class="sr-only">(success)</span>
-              <p ng-show="orderform.maxpeople.$dirty && orderform.maxpeople.$invalid" class="text-danger">Hey! No letters, buddy! Write only Numeric Value :)</p>
+              <p ng-show="orderform.maxpeople.$dirty && orderform.maxpeople.$invalid" class="text-danger">Hey! No letters, buddy! Write only positive Numeric Value :)</p>
 
             </div>
           </div>
@@ -237,7 +238,7 @@
               <input type="number" class="form-control" id="quoatedprice" name="quoatedprice" aria-describedby="quoatedpriceStatus" ng-pattern="integerval" required ng-model="order.quoatedprice">
               <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="orderform.quoatedprice.$valid"></span>
               <span id="quoatedpriceStatus" class="sr-only">(success)</span>
-              <p ng-show="orderform.quoatedprice.$dirty && orderform.quoatedprice.$invalid" class="text-danger">Hey! No letters, buddy! Write only Numeric Value :)</p>
+              <p ng-show="orderform.quoatedprice.$dirty && orderform.quoatedprice.$invalid" class="text-danger">Hey! No letters, buddy! Write only positive Numeric Value :)</p>
             </div>
           </div>
 
@@ -247,7 +248,7 @@
               <input type="number" class="form-control" id="minprice" aria-describedby="minpriceStatus" name="minprice" ng-pattern="integerval" required ng-model="order.minprice">
               <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" ng-show="orderform.minprice.$valid"></span>
               <span id="minpriceStatus" class="sr-only">(success)</span>
-              <p ng-show="orderform.minprice.$dirty && orderform.minprice.$invalid" class="text-danger">Hey! No letters, buddy! Write only Numeric Value :)</p>
+              <p ng-show="orderform.minprice.$dirty && orderform.minprice.$invalid" class="text-danger">Hey! No letters, buddy! Write only positive Numeric Value :)</p>
             </div>
           </div>
 
@@ -304,7 +305,8 @@
         </div>
     
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="add()"> Add</button>
+            <button class="btn btn-primary" ng-hide="edit" ng-click="add()"> Add</button>
+            <button class="btn btn-primary" ng-show="edit" ng-click="edit()"> Edit</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
     </script>
